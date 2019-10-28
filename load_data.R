@@ -16,3 +16,8 @@ president_polls$Month <- month_column_add(president_polls$end_date)
 president_primary_polls$Month <- month_column_add(president_primary_polls$end_date)
 media_online$Month <- month_column_add(media_online$date)
 media_cable$Month <- month_column_add(media_cable$date)
+president_polls$start_date <- parse_date(as.character(president_polls$start_date),format = "%m/%d/%y")
+president_primary_polls$start_date <- parse_date(as.character(president_primary_polls$start_date),format = "%m/%d/%y")
+president_polls$end_date <- parse_date(as.character(president_polls$end_date),format = "%m/%d/%y")
+president_primary_polls$end_date <- parse_date(as.character(president_primary_polls$end_date),format = "%m/%d/%y")
+

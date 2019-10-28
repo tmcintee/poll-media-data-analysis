@@ -80,6 +80,10 @@ clean_candidate_name <- function(vector)
     {
       first_name <- "Joe"
     }
+    else if(first_name == "Bernard")
+    {
+      first_name <- "Bernie"
+    }
     if(last_name == "Jr." | last_name == "III")
     {
       last_name <- list_names[[i]][[length(list_names[[i]])-1]]
