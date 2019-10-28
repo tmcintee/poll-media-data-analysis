@@ -23,27 +23,46 @@ temp <- gathered_averages %>% group_by(Candidate) %>% summarise(mean_polling = m
 top_ten_candidates <- temp$Candidate[order(temp$mean_polling,decreasing = TRUE)][1:11]
 top_ten_averages <- gathered_averages %>% filter(Candidate %in% top_ten_candidates)
 top_ten_averages$Candidate <- factor(top_ten_averages$Candidate, levels = top_ten_candidates)
-media_total_filtered <- media_total %>% filter(name %in% top_ten_candidates)
-media_total_filtered$Candidate <- factor(media_total_filtered$name,levels = top_ten_candidates)
-media_total_filtered$Date <- media_total_filtered$date
 
 ggplot(top_ten_averages,aes(x=Date,y=Polling, color = Candidate))+
   geom_smooth()+
-  geom_smooth(data=media_total_filtered,aes(y=Coverage_share))+
+  geom_smooth(data=media_total_joined_filtered,aes(y=Coverage_share))+
   scale_y_log10(limits = c(0.5,100),breaks = c(0.5,1,2,5,10,20,30))+
   facet_wrap(~Candidate)
-#media_total
+#media_total_joined
 #
 
-media_total$Polling_after <- numeric(length = nrow(media_total))
-media_total$Polling_before <- numeric(length = nrow(media_total))
-media_total$Polling_at <- numeric(length = nrow(media_total))
-for(i in 1:nrow(media_total))
+media_total_joined$Polling_after <- numeric(length = nrow(media_total_joined))
+media_total_joined$Polling_before <- numeric(length = nrow(media_total_joined))
+media_total_joined$Polling_at <- numeric(length = nrow(media_total_joined))
+for(i in 1:nrow(media_total_joined))
 {
   temp <- president_primary_polls %>% filter(state == "",
-                                             candidate_name == media_total$name[[i]])
+                                             candidate_name == media_total_joined$name[[i]])
   #2 week window, -7 / +6 days
-  media_total$Polling_before[[i]] <- averagePolls(specific_date = media_total$date[[i]] - 4,media_total$name[[i]],data_frame = temp,window = 6)
-  media_total$Polling_after[[i]] <- averagePolls(specific_date = media_total$date[[i]] + 4,media_total$name[[i]],data_frame = temp,window = 6)
-  media_total$Polling_at[[i]] <- averagePolls(specific_date = media_total$date[[i]],media_total$name[[i]],data_frame = temp,window = 6)
+  media_total_joined$Polling_before[[i]] <- averagePolls(specific_date = media_total_joined$date[[i]] - 4,media_total_joined$name[[i]],data_frame = temp,window = 6)
+  media_total_joined$Polling_after[[i]] <- averagePolls(specific_date = media_total_joined$date[[i]] + 4,media_total_joined$name[[i]],data_frame = temp,window = 6)
+  media_total_joined$Polling_at[[i]] <- averagePolls(specific_date = media_total_joined$date[[i]],media_total_joined$name[[i]],data_frame = temp,window = 6)
 }
+media_total_joined_filtered <- media_total_joined %>% filter(name %in% top_ten_candidates)
+media_total_joined_filtered$Candidate <- factor(media_total_joined_filtered$name,levels = top_ten_candidates)
+media_total_joined_filtered$Date <- media_total_joined_filtered$date
+media_total_joined_filtered <- media_total_joined_filtered[complete.cases(media_total_joined_filtered),]
+
+media_averaged <- media_total_joined_filtered %>% group_by(name,Month) %>% summarise(Coverage_share = mean(Coverage_share),
+                                                                                    Polling_at = mean(Polling_at),
+                                                                                    Polling_before = mean(Polling_before),
+                                                                                    Polling_after = mean(Polling_after),)
+media_total_joined_filtered <- ungroup(media_total_joined_filtered)
+ggplot(media_total_joined_filtered, aes(y = Coverage_share,x = Polling_before, color = name,label = name, group = NA)) +
+  #geom_point(alpha = 0.2)+
+  #geom_smooth(method = "lm", se = FALSE)+
+  geom_text(data = media_averaged)+
+  geom_point(data = media_averaged)+
+  facet_wrap(~Month)
+
+big_picture <- media_total_joined %>% group_by(name) %>% summarise(combined = sum(combined),Polling = mean(Polling_at,na.rm = TRUE))
+ggplot(big_picture,aes(x = Polling, y = combined, color = name, label = name))+
+  geom_point()+
+  geom_text_repel()+
+  geom_smooth(method = "lm", se = FALSE)

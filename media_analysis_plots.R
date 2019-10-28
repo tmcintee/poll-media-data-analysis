@@ -72,7 +72,3 @@ candidate_horserace_polling <- candidate_horserace_polling %>% ungroup()
 ggplot(president_primary_polls %>% filter(candidate_name %in% candidate_coverage$candidate_name),aes(x = end_date,y = pct, color = candidate_name, group = candidate_name, alpha = Weight))+
   geom_jitter()+
   scale_y_log10(limits = c(1,40),breaks = c(1,2,5,10,20,40))
-
-media_total <- inner_join(media_cable,media_online,by = c("date","name"))
-media_total$combined <- media_total$matched_stories + media_total$matched_clips
-media_total$Coverage_share <- 100*media_total$combined / (media_total$all_candidate_clips + media_total$all_candidate_stories)

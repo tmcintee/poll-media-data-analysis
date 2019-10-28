@@ -20,4 +20,10 @@ president_polls$start_date <- parse_date(as.character(president_polls$start_date
 president_primary_polls$start_date <- parse_date(as.character(president_primary_polls$start_date),format = "%m/%d/%y")
 president_polls$end_date <- parse_date(as.character(president_polls$end_date),format = "%m/%d/%y")
 president_primary_polls$end_date <- parse_date(as.character(president_primary_polls$end_date),format = "%m/%d/%y")
-
+media_online$date <- parse_date(as.character(media_online$date,"%Y-%m-%d"))
+media_cable$date <- parse_date(as.character(media_cable$date,"%Y-%m-%d"))
+media_total <- inner_join(media_cable,media_online,by = c("date","name","Month"))
+media_total$combined <- media_total$matched_stories + media_total$matched_clips
+sum_by_date <- media_total %>% group_by(date) %>% summarise(total_mentions = sum(matched_clips)+sum(matched_stories))
+media_total_joined <- left_join(media_total,sum_by_date)
+media_total_joined$Coverage_share <- 100*media_total_joined$combined / media_total_joined$total_mentions
