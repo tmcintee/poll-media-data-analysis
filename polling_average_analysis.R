@@ -20,18 +20,19 @@ for(each_candidate in all_candidates)
 }
 gathered_averages <- gather(polling_averages,key = "Candidate", value = "Polling",-c("Date")) %>% filter(!is.na(Polling))
 temp <- gathered_averages %>% group_by(Candidate) %>% summarise(mean_polling = mean(Polling))
-top_ten_candidates <- temp$Candidate[order(temp$mean_polling,decreasing = TRUE)][1:11]
-top_ten_averages <- gathered_averages %>% filter(Candidate %in% top_ten_candidates)
-top_ten_averages$Candidate <- factor(top_ten_averages$Candidate, levels = top_ten_candidates)
+top_six_candidates <- temp$Candidate[order(temp$mean_polling,decreasing = TRUE)][1:6]
+top_six_averages <- gathered_averages %>% filter(Candidate %in% top_six_candidates)
+top_six_averages$Candidate <- factor(top_six_averages$Candidate, levels = top_six_candidates)
 
-ggplot(top_ten_averages,aes(x=Date,y=Polling, color = Candidate))+
-  geom_smooth()+
-  geom_smooth(data=media_total_joined_filtered,aes(y=Coverage_share))+
-  scale_y_log10(limits = c(0.5,100),breaks = c(0.5,1,2,5,10,20,30))+
-  facet_wrap(~Candidate)
+color_set <- colorRampPalette(brewer.pal(9,"Set1"))
+colors_instance <- color_set(12)
+colors_instance[[8]] <- "seagreen"
+
+next_six_candidates <- c(temp$Candidate[order(temp$mean_polling,decreasing = TRUE)][7:11],"Tom Steyer")
+next_six_averages <- gathered_averages %>% filter(Candidate %in% next_six_candidates)
+next_six_averages$Candidate <- factor(next_six_averages$Candidate, levels = next_six_candidates)
+
 #media_total_joined
-#
-
 media_total_joined$Polling_after <- numeric(length = nrow(media_total_joined))
 media_total_joined$Polling_before <- numeric(length = nrow(media_total_joined))
 media_total_joined$Polling_at <- numeric(length = nrow(media_total_joined))
@@ -54,15 +55,5 @@ media_averaged <- media_total_joined_filtered %>% group_by(name,Month) %>% summa
                                                                                     Polling_before = mean(Polling_before),
                                                                                     Polling_after = mean(Polling_after),)
 media_total_joined_filtered <- ungroup(media_total_joined_filtered)
-ggplot(media_total_joined_filtered, aes(y = Coverage_share,x = Polling_before, color = name,label = name, group = NA)) +
-  #geom_point(alpha = 0.2)+
-  #geom_smooth(method = "lm", se = FALSE)+
-  geom_text(data = media_averaged)+
-  geom_point(data = media_averaged)+
-  facet_wrap(~Month)
 
 big_picture <- media_total_joined %>% group_by(name) %>% summarise(combined = sum(combined),Polling = mean(Polling_at,na.rm = TRUE))
-ggplot(big_picture,aes(x = Polling, y = combined, color = name, label = name))+
-  geom_point()+
-  geom_text_repel()+
-  geom_smooth(method = "lm", se = FALSE)
