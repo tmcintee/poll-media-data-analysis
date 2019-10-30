@@ -57,3 +57,5 @@ media_averaged <- media_total_joined_filtered %>% group_by(name,Month) %>% summa
 media_total_joined_filtered <- ungroup(media_total_joined_filtered)
 
 big_picture <- media_total_joined %>% group_by(name) %>% summarise(combined = sum(combined),Polling = mean(Polling_at,na.rm = TRUE))
+recent_dates <- c(max(top_six_averages$Date),max(top_six_averages$Date)-30)
+fifth_campaign_qualifier_cutoffs <- parse_date(c("2019-09-20","2019-11-07"))

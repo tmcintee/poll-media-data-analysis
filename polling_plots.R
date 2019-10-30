@@ -1,18 +1,41 @@
+plot_top_six <- ggplot(top_six_averages,aes(x=Date,y=Polling, color = Candidate))+
+  scale_color_manual(values = colors_instance[1:6])
+plot_next_six <- ggplot(next_six_averages,aes(x=Date,y=Polling, color = Candidate))+
+  scale_color_manual(values = colors_instance[7:12])
+plot_all <- ggplot(rbind(top_six_averages,next_six_averages), aes(x = Date, y = Polling, color = Candidate))+
+  scale_color_manual(values = colors_instance)
+plot_low <- ggplot(rbind(top_six_averages %>% filter(Candidate == "Beto O'Rourke"),next_six_averages) %>%
+                               filter(), aes(x = Date, y = Polling, color = Candidate))+
+  scale_color_manual(values = colors_instance[6:12])
 
-ggplot(top_six_averages,aes(x=Date,y=Polling, color = Candidate))+
-  #geom_smooth(alpha = 0.1)+
+plot_top_six +
   geom_line(size=1)+
-  scale_color_manual(values = colors_instance[1:6])+
-  #geom_smooth(data=media_total_joined_filtered,aes(y=Coverage_share),alpha = 0.5)+
-  scale_y_log10(breaks = c(0.5,1,2,5,10,20,40), limits = c(0.5,40))+
-  facet_wrap(~Candidate,nrow = 2)
-ggplot(next_six_averages,aes(x=Date,y=Polling, color = Candidate))+
-  #geom_smooth(alpha = 0.1)+
+  labs(title = "Aggregate polling by date, 2 week rolling window")
+plot_top_six +
   geom_line(size=1)+
-  scale_color_manual(values = colors_instance[7:12])+
-  #geom_smooth(data=media_total_joined_filtered,aes(y=Coverage_share),alpha = 0.5)+
-  scale_y_log10(breaks = c(0.5,1,2,5,10,20,40), limits = c(0.5,40))+
-  facet_wrap(~Candidate,nrow = 2)
+  #geom_smooth(model = "lm", formula = y ~ x)+
+  scale_x_date(limits = c(max(top_six_averages$Date)-30,max(top_six_averages$Date)))+
+  labs(title = "Recent polling")
+plot_next_six +
+  geom_line(size=1)+
+  labs(title = "Aggregate polling by date, 2 week rolling window")
+
+plot_next_six +
+  geom_line(size=1)+
+  scale_x_date(limits = c(max(top_six_averages$Date)-30,max(top_six_averages$Date)))+
+  labs(title = "Recent polling")
+
+plot_all +
+  geom_line(size = 1)+
+  scale_x_date(limits = c(max(top_six_averages$Date)-30,max(top_six_averages$Date))) +
+  scale_y_log10(limits = c(0.5,30))+
+  labs(title = "Recent polling (log scaled)")
+
+plot_low +
+  geom_line(size = 1)+
+  scale_x_date(limits = fifth_campaign_qualifier_cutoffs)+
+  scale_y_continuous(limits = c(0,4))
+  labs(title = "Aggregated polls, two-week rolling average (September 13th polls and later)")
 
 ggplot(media_total_joined_filtered, aes(y = Coverage_share,x = Polling_before, color = name,label = name, group = NA)) +
   #geom_point(alpha = 0.2)+
