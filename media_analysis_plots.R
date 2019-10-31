@@ -38,37 +38,8 @@ candidate_coverage_monthly$Month <- factor(candidate_coverage_monthly$Month,leve
                                                "October",
                                                "November"))
 
-
-ggplot(candidate_coverage_monthly,aes(x=Polling,y=combined,label = candidate_name))+
-  geom_text_repel()+
-  geom_point()+
-  facet_wrap(~Month, scale = "free")+
-  scale_x_continuous(limits = c(1,40))+
-  #scale_x_log10(limits = c(1,40), breaks = c(1,2,5,10,20,30))+
-  #scale_y_log10()+
-  geom_smooth(method = 'lm',se = FALSE)
 fn <- function(x)
 {
   x*sum(candidate_clips_monthly)/100
 }
-ggplot(candidate_coverage_monthly,aes(x=Polling,y=combined,label = candidate_name))+
-  geom_text_repel()+
-  geom_point()+
-  facet_wrap(~Month, scale = "free")+
-  #scale_x_continuous(limits = c(0.5,10))+
-  scale_x_log10(limits = c(1,40), breaks = c(1,2,5,10,20,30))+
-  scale_y_log10()+
-  stat_function(fun = function(x) sum(combined)/100*x)
-ggplot(candidate_coverage,aes(x=Polling,y=combined,label = candidate_name))+
-  geom_text_repel()+
-  geom_point()+
-  geom_smooth(method = "lm", se = FALSE)+
-  scale_x_continuous(limits = c(1,35), breaks = c(1,2,5,10,15,20,30))+
-  labs(x = "Weighted average of polls",
-       y = "Total number of stories and clips",
-       title = "Candidate media coverage versus horse-race polling numbers")
-
 candidate_horserace_polling <- candidate_horserace_polling %>% ungroup()
-ggplot(president_primary_polls %>% filter(candidate_name %in% candidate_coverage$candidate_name),aes(x = end_date,y = pct, color = candidate_name, group = candidate_name, alpha = Weight))+
-  geom_jitter()+
-  scale_y_log10(limits = c(1,40),breaks = c(1,2,5,10,20,40))

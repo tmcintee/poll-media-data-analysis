@@ -1,3 +1,5 @@
+require(EloRating)
+
 media_complete <- media_total_joined[complete.cases(media_total_joined),]
 media_snub <- data.frame(Candidate_1 = character(),
                          Candidate_2 = character(),
