@@ -43,4 +43,3 @@ fn <- function(x)
   x*sum(candidate_clips_monthly)/100
 }
 candidate_horserace_polling <- candidate_horserace_polling %>% ungroup()
-candidate_coverage$Facet <- candidate_coverage$Polling >=2

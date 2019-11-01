@@ -88,6 +88,10 @@ clean_candidate_name <- function(vector)
     {
       last_name <- list_names[[i]][[length(list_names[[i]])-1]]
     }
+    else if(last_name == "Blasio")
+    {
+      last_name <- "de Blasio"
+    }
     name_candidate_cleaned <- paste0(first_name," ",last_name)
     vector[[i]] <- paste0(first_name," ",last_name)
   }
