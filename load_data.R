@@ -1,6 +1,7 @@
 require(tidyverse)
 require(Hmisc)
 require(ggrepel)
+source("add_ratings_weight.R")
 president_primary_polls <- read.csv("polls/president_primary_polls.csv")
 president_polls <- read.csv("polls/president_polls.csv")
 pollster_ratings <- read.csv("pollster-ratings/pollster-ratings.csv")

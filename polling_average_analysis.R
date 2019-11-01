@@ -1,4 +1,5 @@
 #average polling
+source("averagePolls.R")
 window_size <- 13
 all_candidates <- unique(candidate_coverage$candidate_name)
 all_dates <- unique(c(president_primary_polls$start_date,president_primary_polls$end_date))
