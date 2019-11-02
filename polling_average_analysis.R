@@ -36,6 +36,7 @@ next_six_averages <- gathered_averages %>% filter(Candidate %in% next_six_candid
 next_six_averages$Candidate <- factor(next_six_averages$Candidate, levels = next_six_candidates)
 
 #media_total_joined
+
 media_total_joined$Polling_after <- numeric(length = nrow(media_total_joined))
 media_total_joined$Polling_before <- numeric(length = nrow(media_total_joined))
 media_total_joined$Polling_at <- numeric(length = nrow(media_total_joined))
@@ -48,10 +49,14 @@ for(i in 1:nrow(media_total_joined))
   media_total_joined$Polling_after[[i]] <- averagePolls(specific_date = media_total_joined$date[[i]] + 4,media_total_joined$name[[i]],data_frame = temp,window = 6)
   media_total_joined$Polling_at[[i]] <- averagePolls(specific_date = media_total_joined$date[[i]],media_total_joined$name[[i]],data_frame = temp,window = 6)
 }
+media_total_joined$Coverage_PPP <- media_total_joined$combined / media_total_joined$Polling_at
+
+
 media_total_joined_filtered <- media_total_joined %>% filter(name %in% top_ten_candidates)
 media_total_joined_filtered$Candidate <- factor(media_total_joined_filtered$name,levels = top_ten_candidates)
 media_total_joined_filtered$Date <- media_total_joined_filtered$date
 media_total_joined_filtered <- media_total_joined_filtered[complete.cases(media_total_joined_filtered),]
+
 
 media_averaged <- media_total_joined_filtered %>% group_by(name,Month) %>% summarise(Coverage_share = mean(Coverage_share),
                                                                                     Polling_at = mean(Polling_at),

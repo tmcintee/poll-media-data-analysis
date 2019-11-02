@@ -59,3 +59,14 @@ ggplot(candidate_coverage_monthly_display, aes(x = Polling, y = combined, label 
        y = "Media coverage",
        title = "Media coverage versus polling")+
   facet_wrap(~Month, scale = "free")
+
+
+candidate_order <- media_total_joined %>%
+  group_by(name) %>%
+  summarise(median_CPPP = median(Coverage_PPP,na.rm = TRUE)) %>%
+  arrange(-median_CPPP)
+media_total_joined$name <- factor(media_total_joined$name, levels = candidate_order$name)
+ggplot(media_total_joined, aes(x = reorder(name,Coverage_PPP,order = TRUE), y = Coverage_PPP))+
+  geom_boxplot() +
+  scale_y_log10()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))

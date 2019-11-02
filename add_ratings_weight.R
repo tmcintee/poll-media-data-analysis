@@ -76,6 +76,10 @@ clean_candidate_name <- function(vector)
     {
       first_name <- "Julian"
     }
+    else if(last_name == "Castro")
+    {
+      first_name <- "Julian"
+    }
     else if(first_name == "Joseph")
     {
       first_name <- "Joe"
