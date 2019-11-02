@@ -13,6 +13,7 @@ media_snub <- data.frame(Candidate_1 = character(),
                          Coverage_2 = numeric(),
                          Date_of_comparison = numeric())
 pairs <- 0
+media_sig_snub <- media_snub
 for(each_date in unique(media_complete$date))
 {
   media_date <- media_complete %>% filter(date == each_date)
@@ -43,7 +44,27 @@ for(each_date in unique(media_complete$date))
                               Coverage_1 = media_date$combined[[i]],
                               Coverage_2 = media_date$combined[[j]],
                               Date_of_comparison = each_date)
+        if((media_date$combined[[i]] + sqrt(media_date$combined[[i]]))/media_date$Polling_at[[i]] <
+           media_date$combined[[j]]/media_date$Polling_at[[i]] &
+           (media_date$combined[[i]] + sqrt(media_date$combined[[i]]))/media_date$Polling_before[[i]] <
+           media_date$combined[[j]]/media_date$Polling_before[[i]])
+        {
+          media_sig_snub = add_case(media_sig_snub,
+                                    Candidate_1 = media_date$name[[i]],
+                                    Candidate_2 = media_date$name[[j]],
+                                    Polling_before_1 = media_date$Polling_before[[i]],
+                                    Polling_before_2 = media_date$Polling_before[[j]],
+                                    Polling_at_1 = media_date$Polling_at[[i]],
+                                    Polling_at_2 = media_date$Polling_at[[j]],
+                                    Polling_after_1 = media_date$Polling_after[[i]],
+                                    Polling_after_2 = media_date$Polling_after[[j]],
+                                    Coverage_1 = media_date$combined[[i]],
+                                    Coverage_2 = media_date$combined[[j]],
+                                    Date_of_comparison = each_date)
+        }
+
       }
+
 
     }
   }
@@ -57,3 +78,7 @@ favorites_date <- table(media_snub[c("Candidate_2","Date_of_comparison")])
 snubs_date <- table(media_snub[c("Candidate_1","Date_of_comparison")])
 comparison_table <- table(media_snub[c("Candidate_1","Candidate_2")])
 
+snubs_over_one <- media_snub %>% filter(Polling_at_1 >= 1 & Polling_before_1 >=1)
+elo_raw <- elo.seq(media_snub$Candidate_2,media_snub$Candidate_1,media_snub$Date_of_comparison)
+elo_over <- elo.seq(snubs_over_one$Candidate_2, snubs_over_one$Candidate_1,snubs_over_one$Date_of_comparison)
+elo_sig <- elo.seq(media_sig_snub$Candidate_2,media_sig_snub$Candidate_1,media_sig_snub$Date_of_comparison)
