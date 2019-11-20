@@ -31,7 +31,7 @@ media_snub <- data.frame(Candidate_1 = character(),
                          Coverage_1 = numeric(),
                          Coverage_2 = numeric(),
                          Coverage_diff = numeric(),
-                         Date_of_comparison = numeric()),
+                         Date_of_comparison = numeric())
 
 pairs <- 0
 media_sig_snub <- media_snub
@@ -127,3 +127,19 @@ sig_elo_ratings <- extract_elo(elo_sig)
 one_sig_elo_ratings <- extract_elo(elo_sig)
 active_elo <- extract_elo(elo_active)
 major_elo <- extract_elo(elo_active_major)
+elo_DF <- data.frame(name = names(raw_elo_ratings), Elo = as.numeric(raw_elo_ratings))
+elo_DF <- inner_join(elo_DF,big_picture)
+elo_DF$name <- factor(elo_DF$name, levels = elo_DF$name[order(elo_DF$Elo, decreasing = TRUE)])
+write_csv(elo_DF,"Elo.csv")
+
+snub_date_max <- media_snub %>% group_by(Candidate_1,Date_of_comparison) %>% summarise(max_snub = max(Coverage_diff))
+fave_date_max <- media_snub %>% group_by(Candidate_2,Date_of_comparison) %>% summarise(max_fave = max(Coverage_diff))
+
+snubbed_coverage <- snub_date_max %>% group_by(Candidate_1) %>% summarise(total_snub_coverage = sum(max_snub))
+favorite_coverage <- fave_date_max %>% group_by(Candidate_2) %>% summarise(total_fave_coverage = sum(max_fave))
+snubbed_coverage$Candidate <- snubbed_coverage$Candidate_1
+favorite_coverage$Candidate <- favorite_coverage$Candidate_2
+snubbed_coverage <- snubbed_coverage %>% full_join(favorite_coverage)
+snubbed_coverage[is.na(snubbed_coverage)] <- 0
+snubbed_coverage$Net_coverage <- snubbed_coverage$total_fave_coverage - snubbed_coverage$total_snub_coverage
+snubbed_coverage$Candidate <- factor(snubbed_coverage$Candidate, levels = snubbed_coverage$Candidate[order(snubbed_coverage$total_snub_coverage, decreasing = TRUE)])

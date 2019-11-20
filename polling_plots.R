@@ -8,6 +8,26 @@ plot_low <- ggplot(rbind(top_six_averages %>% filter(Candidate == "Beto O'Rourke
                                filter(), aes(x = Date, y = Polling, color = Candidate))+
   scale_color_manual(values = colors_instance[6:12])
 
+plot_three <- ggplot(gathered_averages %>% filter(Candidate %in% c("Beto O'Rourke","Andrew Yang","Elizabeth Warren")), aes(x = Date, y = Polling, color = Candidate))+
+  scale_color_brewer(palette = "Set1")
+plot_three +
+  geom_line(size=1)+
+  labs(title = "Aggregate polling by date, 2 week rolling window")
+
+
+plot_gabbard_sanders <- ggplot(gathered_averages %>% filter(Candidate %in% c("Bernie Sanders","Tulsi Gabbard")), aes(x = Date, y = Polling, color = Candidate))+
+  scale_color_brewer(palette = "Set1")
+plot_gabbard_sanders +
+  geom_line(size=1)+
+  scale_y_log10()+
+  labs(title = "Aggregate polling by date, 2 week rolling window")
+
+plot_all +
+  geom_line(size=1)+
+  labs(title = "Aggregate polling by date, 2 week rolling window")+
+  scale_y_log10(limits = c(1, 41))
+
+
 plot_top_six +
   geom_line(size=1)+
   labs(title = "Aggregate polling by date, 2 week rolling window")

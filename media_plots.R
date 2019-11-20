@@ -1,3 +1,5 @@
+require(tidyverse)
+require(ggrepel)
 candidate_coverage_display <- candidate_coverage
 candidate_coverage_monthly_display <- candidate_coverage_monthly
 candidate_coverage_display$Facet <- candidate_coverage$Polling >=1
@@ -61,12 +63,29 @@ ggplot(candidate_coverage_monthly_display, aes(x = Polling, y = combined, label 
   facet_wrap(~Month, scale = "free")
 
 
-candidate_order <- media_total_joined %>%
-  group_by(name) %>%
-  summarise(median_CPPP = median(Coverage_PPP,na.rm = TRUE)) %>%
-  arrange(-median_CPPP)
-media_total_joined$name <- factor(media_total_joined$name, levels = candidate_order$name)
-ggplot(media_total_joined, aes(x = reorder(name,Coverage_PPP,order = TRUE), y = Coverage_PPP))+
+
+ggplot(media_total_joined_clean, aes(x = name, y = Coverage_PPP,))+
   geom_boxplot() +
-  scale_y_log10()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))+
+  labs(title = "Coverage relative to polling numbers in weeks where aggregate polling is better than 0.5%", x = "Candidate", y="Coverage per point of polling")
+
+ggplot(elo_DF, aes(x = name, y= Elo, fill = Polling))+
+  geom_bar(stat = "identity")+
+  scale_fill_gradient(trans = "log", breaks = c(0.5,1,2,5,10,25))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))+
+  scale_y_continuous(breaks = c(0,200,400,600,800,1000,1200,1400,1600))+
+  labs(title = "Degree of media preference for candidate",
+       x = "Candidate",
+       y = "Media preference")
+
+ggplot(snubbed_coverage, aes(x = Candidate, y= total_snub_coverage))+
+  geom_bar(stat = "identity")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))+
+  labs(title = "Snubs coverage",
+       x = "Candidate",
+       y = "Total difference in coverage")
+
+ggplot(media_total_joined_clean, aes(x = Polling_at, y = combined))+
+  geom_smooth(method = "lm") +
+  geom_point()+
+  facet_wrap(~Month)

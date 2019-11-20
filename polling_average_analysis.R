@@ -67,3 +67,28 @@ media_total_joined_filtered <- ungroup(media_total_joined_filtered)
 big_picture <- media_total_joined %>% group_by(name) %>% summarise(combined = sum(combined),Polling = mean(Polling_at,na.rm = TRUE))
 recent_dates <- c(max(top_six_averages$Date),max(top_six_averages$Date)-30)
 fifth_campaign_qualifier_cutoffs <- parse_date(c("2019-09-20","2019-11-07"))
+
+
+## Coverage per point
+media_total_joined_clean <- media_total_joined %>% filter(Polling_at > 0)
+media_lm <- lm(media_total_joined_clean$combined ~ media_total_joined_clean$Polling_at)
+media_lm_before <-  lm(media_total_joined_clean$combined ~ media_total_joined_clean$Polling_before)
+media_total_joined_clean$Coverage_predict <- media_lm$coefficients[[1]] + media_total_joined_clean$Polling_at*media_lm$coefficients[[2]]
+media_total_joined_clean <-
+  media_total_joined_clean %>%
+  mutate(Coverage_PPP_adj = (combined - Coverage_predict)/Coverage_predict)
+
+candidate_order <- media_total_joined_clean %>%
+  group_by(name) %>%
+  summarise(median_CPPP = median(Coverage_PPP,na.rm = TRUE),
+            median_CPPP_adj = median(Coverage_PPP_adj, na.rm = TRUE),
+            median_polling = median(Polling_at)) %>%
+  arrange(-median_CPPP_adj)
+media_total_joined_clean$name <- factor(media_total_joined_clean$name, levels = candidate_order$name)
+write_csv(candidate_order,"candidate_median_CPPP.csv")
+
+candidate_order$Candidate <- candidate_order$name
+elo_DF$Candidate <- elo_DF$name
+
+summary_table <- snubbed_coverage %>% full_join(candidate_order) %>% full_join(elo_DF)
+write_csv(summary_table,"all_measures.csv")
