@@ -32,9 +32,11 @@ for(i in 1:nrow(president_polls))
     }
   }
 }
+president_polls <- president_polls %>% mutate(net_swing = diff_dem-diff_rep)
 avgs_h2h <- president_polls %>%
   group_by(candidate_name) %>%
-  summarise(avg_swing = wtd.mean(net_swing,Weight)) %>%
+  summarise(avg_swing = wtd.mean(net_swing,Weight),
+            count = n()) %>%
   arrange(-avg_swing)
 president_polls$net_swing <- president_polls$diff_dem - president_polls$diff_rep
 president_polls$candidate_name <- factor(president_polls$candidate_name,
@@ -52,3 +54,5 @@ ggplot(president_polls %>% filter(candidate_name %in% top_six),aes(x = diff_rep,
   labs(x = "Change in vote for Republican from median in same poll",
      y = "Change in vote for Democrat from median in same poll",
      title = "2020 head to head polling summarized")
+
+
