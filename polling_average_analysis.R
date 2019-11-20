@@ -23,7 +23,7 @@ for(each_candidate in all_candidates)
 }
 gathered_averages <- gather(polling_averages,key = "Candidate", value = "Polling",-c("Date")) %>% filter(!is.na(Polling))
 temp <- gathered_averages %>% group_by(Candidate) %>% summarise(mean_polling = mean(Polling))
-top_six_candidates <- temp$Candidate[order(temp$mean_polling,decreasing = TRUE)][1:6]
+top_six_candidates <- temp$Candidate[order(temp$mean_polling,decreasing = TRUE)][c(1:5,8)]
 top_six_averages <- gathered_averages %>% filter(Candidate %in% top_six_candidates)
 top_six_averages$Candidate <- factor(top_six_averages$Candidate, levels = top_six_candidates)
 

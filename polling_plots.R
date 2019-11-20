@@ -1,5 +1,5 @@
 plot_top_six <- ggplot(top_six_averages,aes(x=Date,y=Polling, color = Candidate))+
-  scale_color_manual(values = colors_instance[1:6])
+  scale_color_manual(values = colors_instance[c(1:6)])
 plot_next_six <- ggplot(next_six_averages,aes(x=Date,y=Polling, color = Candidate))+
   scale_color_manual(values = colors_instance[7:12])
 plot_all <- ggplot(rbind(top_six_averages,next_six_averages), aes(x = Date, y = Polling, color = Candidate))+
