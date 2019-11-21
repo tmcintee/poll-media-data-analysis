@@ -39,6 +39,8 @@ summary_electoral_record <- electoral_record %>%
   summarise(Mean_for_vs_med = mean(for_vs_med),
             Mean_against_vs_med = mean(against_vs_med),
             Mean_net_vs_med = mean(net_vs_med),
-            Mean_for_pct_elec <- mean(for_pct_vs_med),
-            Mean_against_pct_elec <- mean(against_pct_vs_med),
-            Mean_net_pct_elec <- mean(net_pct_vs_med))
+            Mean_for_pct_elec = mean(for_pct_vs_med),
+            Mean_against_pct_elec = mean(against_pct_vs_med),
+            Net = 100*mean(net_pct_vs_med),
+            elec.count = n())
+

@@ -36,8 +36,9 @@ president_polls <- president_polls %>% mutate(net_swing = diff_dem-diff_rep)
 avgs_h2h <- president_polls %>%
   group_by(candidate_name) %>%
   summarise(avg_swing = wtd.mean(net_swing,Weight),
-            count = n()) %>%
+            poll.count = n()) %>%
   arrange(-avg_swing)
+avgs_h2h$Candidate <- avgs_h2h$candidate_name
 president_polls$net_swing <- president_polls$diff_dem - president_polls$diff_rep
 president_polls$candidate_name <- factor(president_polls$candidate_name,
                                          levels = (president_polls %>%
