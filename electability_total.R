@@ -39,7 +39,8 @@ fifth_debate_electability_summary$Outsider <- 0
 fifth_debate_electability_summary$Outsider[fifth_debate_electability_summary$Candidate %in% c("Andrew Yang",
                                                                                               "Bernie Sanders",
                                                                                               "Tulsi Gabbard",
-                                                                                              "Tom Steyer")] <- 5
+                                                                                              "Tom Steyer",
+                                                                                              "Pete Buttigieg")] <- 5
 
 
 
