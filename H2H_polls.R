@@ -1,3 +1,5 @@
+require(tidyverse)
+require(Hmisc)
 president_polls$state_abb <- state.abb[match(president_polls$state,state.name)]
 president_polls$state_abb[is.na(president_polls$state_abb)] <- "US"
 president_polls$median_rep <- NA
