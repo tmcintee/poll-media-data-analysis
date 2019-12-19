@@ -3,7 +3,7 @@ source("averagePolls.R")
 require(RColorBrewer)
 require(tidyverse)
 window_size <- 13
-all_candidates <- unique(candidate_coverage$candidate_name)
+all_candidates <- c(unique(candidate_coverage$candidate_name),"Deval Patrick","Michael Bloomberg")
 all_dates <- unique(c(president_primary_polls$start_date,president_primary_polls$end_date))
 polling_averages <- data.frame(matrix(nrow = length(all_dates),ncol = length(all_candidates)+1))
 colnames(polling_averages) <- c("Date",all_candidates)
