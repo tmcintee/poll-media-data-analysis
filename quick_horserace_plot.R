@@ -3,18 +3,11 @@ current_candidates <- c(           "Joe Biden",
                         "Bernie Sanders",
                         "Elizabeth Warren",
                         "Pete Buttigieg",
-                        "Kamala Harris",
                         "Amy Klobuchar",
                         "Tom Steyer",
                         "Tulsi Gabbard",
-                        "Andrew Yang",
-                        "Cory Booker",
-                        "Julian Castro",
-                        "Marianne Williamson",
-                        "Michael Bennet",
-                        "John Delaney",
-                        "Michael Bloomberg",
-                        "Deval Patrick")
+                        "Michael Bloomberg"
+                        )
 current_polling_averages <- polling_averages[c("Date",intersect(names(polling_averages),current_candidates))] %>%
   gather("Candidate","Polling",-Date,na.rm = TRUE)
 temp <- current_polling_averages %>%
@@ -31,6 +24,6 @@ ggplot(current_polling_averages %>% filter(Polling > 1),aes(x = Date, y = Pollin
   scale_y_log10(limits = c(1,41), breaks = c(1,2,3,4,5,10,15,20,30,40))+
   geom_line(size = 1)+
   #geom_point(data = ppp_filtered, aes(x = as.Date(mean(c(end_date,start_date))), y = pct), alpha = 0.1)+
-  scale_color_brewer(palette = "Paired")+
+  scale_color_brewer(palette = "Set2")+
   labs(title = "Horse-race polling averages (weighted, 2 week window, log scale)")
 
